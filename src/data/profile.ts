@@ -3,12 +3,12 @@ import { ProfileData } from './types';
 export const profileData: ProfileData = {
   name: "Jack Gunsten",
   title: "Building the future",
-  subtitle: "of AI at Square.",
+  subtitle: "at Square.",
   tagline: "Combining technical depth with product intuition to build AI-powered experiences that empower economic empowerment.",
   headshot: "/images/headshot.jpg", // Replace with your actual headshot
-  linkedinUrl: "https://linkedin.com/in/your-profile", // Replace with your LinkedIn URL
-  githubUrl: "https://github.com/your-username", // Replace with your GitHub URL
-  email: "your.email@example.com", // Replace with your email
+  linkedinUrl: "https://www.linkedin.com/in/jack-gunsten-94b344182/",
+  githubUrl: "https://github.com/jgunsten12",
+  email: "jgunsten12@gmail.com",
   stats: [
     { label: "AI Models", value: "LLM & Diffusion" },
     { label: "Stack", value: "Full-Stack Typescript" },

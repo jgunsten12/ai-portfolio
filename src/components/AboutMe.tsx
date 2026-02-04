@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { profileData } from "@/data/profile";
 
 export default function AboutMe() {
+  const [headshotError, setHeadshotError] = useState(false);
+
   return (
     <section id="about" className="py-16 sm:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,16 +27,19 @@ export default function AboutMe() {
             <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
               {/* Profile Image */}
               <div className="relative w-24 h-24 mx-auto mb-4 rounded-xl overflow-hidden bg-gray-100">
-                <Image
-                  src={profileData.headshot}
-                  alt={profileData.name}
-                  fill
-                  className="object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect fill='%23e5e7eb' width='100' height='100'/%3E%3Ctext fill='%239ca3af' font-family='sans-serif' font-size='12' x='50%25' y='50%25' text-anchor='middle' dy='.3em'%3EPhoto%3C/text%3E%3C/svg%3E";
-                  }}
-                />
+                {headshotError ? (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
+                    <span className="text-gray-400 text-xs font-medium">Photo</span>
+                  </div>
+                ) : (
+                  <Image
+                    src={profileData.headshot}
+                    alt={profileData.name}
+                    fill
+                    className="object-cover"
+                    onError={() => setHeadshotError(true)}
+                  />
+                )}
               </div>
 
               {/* Name & Title */}
@@ -81,16 +87,6 @@ export default function AboutMe() {
                     </svg>
                   </a>
                 )}
-              </div>
-
-              {/* Download Resume Button */}
-              <div className="mt-6 pt-6 border-t border-gray-100">
-                <a
-                  href="#contact"
-                  className="block w-full py-2.5 text-center text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  Get in Touch
-                </a>
               </div>
             </div>
           </div>
