@@ -11,7 +11,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <span className="text-lg font-bold tracking-tight text-gray-900">
-              SQUARE APM
+              Jack Gunsten
             </span>
           </Link>
 

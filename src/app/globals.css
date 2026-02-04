@@ -47,6 +47,24 @@ body {
   animation: fadeIn 0.5s ease-out forwards;
 }
 
+/* Marquee scroll animation */
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 25s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+
 /* Focus styles for accessibility */
 a:focus-visible,
 button:focus-visible {
