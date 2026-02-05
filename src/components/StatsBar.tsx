@@ -31,32 +31,21 @@ export default function StatsBar() {
         
         {/* Scrolling container */}
         <div className="flex animate-scroll">
-          {/* First set */}
-          <div className="flex shrink-0">
-            {technologies.map((tech, index) => (
-              <div
-                key={`first-${index}`}
-                className="flex items-center mx-4 sm:mx-8"
-              >
-                <span className="text-sm sm:text-base font-medium text-gray-700 whitespace-nowrap">
-                  {tech}
-                </span>
-              </div>
-            ))}
-          </div>
-          {/* Duplicate for seamless loop */}
-          <div className="flex shrink-0">
-            {technologies.map((tech, index) => (
-              <div
-                key={`second-${index}`}
-                className="flex items-center mx-4 sm:mx-8"
-              >
-                <span className="text-sm sm:text-base font-medium text-gray-700 whitespace-nowrap">
-                  {tech}
-                </span>
-              </div>
-            ))}
-          </div>
+          {/* Render 4 sets for seamless infinite loop */}
+          {[0, 1, 2, 3].map((setIndex) => (
+            <div key={setIndex} className="flex shrink-0">
+              {technologies.map((tech, index) => (
+                <div
+                  key={`${setIndex}-${index}`}
+                  className="flex items-center mx-4 sm:mx-8"
+                >
+                  <span className="text-sm sm:text-base font-medium text-gray-700 whitespace-nowrap">
+                    {tech}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </section>

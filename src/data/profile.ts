@@ -16,28 +16,28 @@ export const profileData: ProfileData = {
     { label: "Experience", value: "3+ Years Shipping" },
   ],
   about: {
-    summary: "AI Product Manager passionate about building intelligent systems that solve real-world problems. I combine deep technical understanding with user-centric design to ship AI products that make a meaningful impact.",
+    summary: "Problem solver passionate about building intelligent systems that solve real-world problems. I combine deep technical understanding with user-centric design to ship AI products that make a meaningful impact.",
     experience: {
       title: "Experience",
       items: [
-        "AI Product Manager at Square - Leading AI initiatives for merchant experiences",
-        "Previously built ML-powered features at high-growth startups",
-        "Shipped products used by millions of users worldwide",
+        "Head of RevOps at Thrive - Fast paced startup building AI-powered tools for 0-1 problems",
+        "Account Manager at Square - Deep understanding of seller problems, and where to drive impact",
+        "Volunteer at Boy Scouts of America - Deployed member CRM, and multiple custom AI-powered BI tools",
       ],
     },
     skills: {
       title: "Technical Skills",
       items: [
-        "Machine Learning: LLMs, Diffusion Models, Computer Vision, NLP",
-        "Development: TypeScript, Python, React, Node.js",
-        "Tools: TensorFlow, PyTorch, OpenAI APIs, AWS, GCP",
+        "Data Pipelines: ETL, Data Warehouse, BI",
+        "Development: Cursor, v0, Python, Typescript, SQL",
+        "Tools: LLM's, PostgreSQL Databse, no-code & low-code tools",
       ],
     },
     education: {
       title: "Education",
       items: [
-        "Bachelor's in Computer Science",
-        "Certifications in Machine Learning & AI",
+        "Bachelor's in Organizational Communications",
+        "Business Minor",
       ],
     },
   },

@@ -89,7 +89,7 @@ export async function fetchProjectsFromSheet(): Promise<Project[]> {
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
       const link = row[8]?.trim() || undefined;
-      const featured = row[9]?.trim().toUpperCase() === "TRUE";
+      const featured = row[9]?.trim()?.toUpperCase() === "TRUE";
 
       if (title) {
         projects.push({
