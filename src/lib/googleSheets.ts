@@ -59,10 +59,11 @@ function parseCSV(csv: string): string[][] {
 export async function fetchProjectsFromSheet(): Promise<Project[]> {
   try {
     const response = await fetch(SHEET_URL, { 
-      next: { revalidate: 60 } // Revalidate every 60 seconds
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
     
     if (!response.ok) {
+      console.error(`Sheet fetch failed with status: ${response.status}`);
       throw new Error("Failed to fetch sheet data");
     }
 

@@ -47,13 +47,13 @@ body {
   animation: fadeIn 0.5s ease-out forwards;
 }
 
-/* Marquee scroll animation */
+/* Marquee scroll animation - translates by 25% for 4 sets (100/4) */
 @keyframes scroll {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(-25%);
   }
 }
 

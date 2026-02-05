@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Jack Gunsten Portfolio
+
+A modern portfolio website built with Next.js 16, React 19, and Tailwind CSS 4. Optimized for deployment on Vercel.
+
+## Features
+
+- Responsive design with modern UI
+- Project showcase with image carousels and lightbox
+- Dynamic project data fetched from Google Sheets
+- Continuous scrolling technology marquee
+- SEO optimized with Open Graph and Twitter cards
+- Performance optimized for Core Web Vitals
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **UI**: React 19 + Tailwind CSS 4
+- **Deployment**: Vercel
+- **Data**: Google Sheets (public CSV export)
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the site.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/           # Next.js App Router pages
+├── components/    # React components
+├── data/          # Static data and types
+└── lib/           # Utility functions (Google Sheets fetcher)
+```
 
-## Learn More
+## Configuration
 
-To learn more about Next.js, take a look at the following resources:
+### Google Sheets Integration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Projects are fetched from a public Google Sheet. To use your own sheet:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Create a Google Sheet with columns: Title, Description, Image1-5, Tags, Link, Featured
+2. Make the sheet publicly viewable
+3. Update `SHEET_ID` in `src/lib/googleSheets.ts`
+
+### Images
+
+- Local images: Place in `public/images/`
+- Remote images: Google Drive links are automatically converted
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/jgunsten12/ai-portfolio)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push to GitHub
+2. Import project in Vercel
+3. Deploy (no environment variables required)
+
+The site will auto-deploy on every push to the main branch.
