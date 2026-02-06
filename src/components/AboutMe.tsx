@@ -36,6 +36,7 @@ export default function AboutMe() {
                     src={profileData.headshot}
                     alt={profileData.name}
                     fill
+                    sizes="160px"
                     className="object-cover"
                     onError={() => setHeadshotError(true)}
                   />
