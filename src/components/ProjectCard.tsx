@@ -4,6 +4,35 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { Project } from "@/data/types";
 
+function useFullscreen(ref: React.RefObject<HTMLElement | null>) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleChange);
+    return () => document.removeEventListener("fullscreenchange", handleChange);
+  }, []);
+
+  const enterFullscreen = useCallback(() => {
+    ref.current?.requestFullscreen?.();
+  }, [ref]);
+
+  const exitFullscreen = useCallback(() => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.();
+    }
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (isFullscreen) exitFullscreen();
+    else enterFullscreen();
+  }, [isFullscreen, enterFullscreen, exitFullscreen]);
+
+  return { isFullscreen, toggleFullscreen };
+}
+
 // Module-level counter to track open lightboxes across all ProjectCard instances
 let openLightboxCount = 0;
 
@@ -29,7 +58,10 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
   const hasLockedScrollRef = useRef(false);
+  const lightboxRef = useRef<HTMLDivElement>(null);
+  const { isFullscreen, toggleFullscreen } = useFullscreen(lightboxRef);
 
   const images = project.images.length > 0 ? project.images : ["/images/projects/placeholder.jpg"];
   const hasMultipleImages = images.length > 1;
@@ -56,8 +88,16 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     }
   };
 
+  const toggleZoom = useCallback(() => {
+    setIsZoomed((prev) => !prev);
+  }, []);
+
   const closeLightbox = useCallback(() => {
     setIsLightboxOpen(false);
+    setIsZoomed(false);
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.();
+    }
     if (hasLockedScrollRef.current) {
       unlockScroll();
       hasLockedScrollRef.current = false;
@@ -217,31 +257,87 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
       {/* Lightbox Modal */}
       {isLightboxOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/90 backdrop-blur-sm"
-            onClick={closeLightbox}
-          />
+        <div
+          ref={lightboxRef}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+        >
+          {/* Backdrop click to close */}
+          <div className="absolute inset-0" onClick={closeLightbox} />
 
-          {/* Close Button */}
-          <button
-            onClick={closeLightbox}
-            className="absolute top-4 right-4 z-10 p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
-            aria-label="Close lightbox"
-          >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          {/* Top toolbar */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+            {/* Zoom toggle */}
+            <button
+              onClick={toggleZoom}
+              className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+              aria-label={isZoomed ? "Shrink image" : "Maximize image"}
+              title={isZoomed ? "Shrink image" : "Maximize image"}
+            >
+              {isZoomed ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9L4 4m0 0v4m0-4h4m6 6l5 5m0 0v-4m0 4h-4" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h6m0 0v6m0-6l-7 7M9 21H3m0 0v-6m0 6l7-7" />
+                </svg>
+              )}
+            </button>
+
+            {/* Fullscreen toggle */}
+            <button
+              onClick={toggleFullscreen}
+              className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+              aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
+              title={isFullscreen ? "Exit full screen" : "Enter full screen"}
+            >
+              {isFullscreen ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 9V4h5M18 9V4h-5M6 15v5h5M18 15v5h-5" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
+                </svg>
+              )}
+            </button>
+
+            {/* Close */}
+            <button
+              onClick={closeLightbox}
+              className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+              aria-label="Close lightbox"
+            >
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Image counter */}
+          {hasMultipleImages && (
+            <div className="absolute top-5 left-4 z-20 text-sm text-white/60 font-medium">
+              {currentIndex + 1} / {images.length}
+            </div>
+          )}
 
           {/* Content Container */}
           <div
-            className="relative z-10 w-full max-w-5xl mx-4 flex flex-col items-center"
+            className={`relative z-10 flex flex-col items-center transition-all duration-300 ${
+              isZoomed
+                ? "w-full h-full p-2"
+                : "w-full max-w-5xl mx-4"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Image Container */}
-            <div className="relative w-full aspect-[16/10] bg-black/50 rounded-lg overflow-hidden">
+            <div
+              className={`relative bg-black/50 overflow-hidden transition-all duration-300 ${
+                isZoomed
+                  ? "w-full flex-1 rounded-none"
+                  : "w-full aspect-[16/10] rounded-lg"
+              }`}
+            >
               {imageErrors.has(currentIndex) ? (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span className="text-white/50 text-lg font-medium">{project.title}</span>
@@ -303,24 +399,26 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               )}
             </div>
 
-            {/* Project Info */}
-            <div className="mt-6 text-center max-w-2xl">
-              <h2 className="text-2xl font-bold text-white mb-3">{project.title}</h2>
-              <p className="text-white/70 leading-relaxed">{project.description}</p>
-              {project.link && (
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
-                >
-                  View Project
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-              )}
-            </div>
+            {/* Project Info - hidden when zoomed */}
+            {!isZoomed && (
+              <div className="mt-6 text-center max-w-2xl">
+                <h2 className="text-2xl font-bold text-white mb-3">{project.title}</h2>
+                <p className="text-white/70 leading-relaxed">{project.description}</p>
+                {project.link && (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+                  >
+                    View Project
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
