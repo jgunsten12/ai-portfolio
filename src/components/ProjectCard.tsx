@@ -4,35 +4,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { Project } from "@/data/types";
 
-function useFullscreen(ref: React.RefObject<HTMLElement | null>) {
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
-  useEffect(() => {
-    const handleChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    document.addEventListener("fullscreenchange", handleChange);
-    return () => document.removeEventListener("fullscreenchange", handleChange);
-  }, []);
-
-  const enterFullscreen = useCallback(() => {
-    ref.current?.requestFullscreen?.();
-  }, [ref]);
-
-  const exitFullscreen = useCallback(() => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen?.();
-    }
-  }, []);
-
-  const toggleFullscreen = useCallback(() => {
-    if (isFullscreen) exitFullscreen();
-    else enterFullscreen();
-  }, [isFullscreen, enterFullscreen, exitFullscreen]);
-
-  return { isFullscreen, toggleFullscreen };
-}
-
 // Module-level counter to track open lightboxes across all ProjectCard instances
 let openLightboxCount = 0;
 
@@ -61,7 +32,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const [isZoomed, setIsZoomed] = useState(false);
   const hasLockedScrollRef = useRef(false);
   const lightboxRef = useRef<HTMLDivElement>(null);
-  const { isFullscreen, toggleFullscreen } = useFullscreen(lightboxRef);
 
   const images = project.images.length > 0 ? project.images : ["/images/projects/placeholder.jpg"];
   const hasMultipleImages = images.length > 1;
@@ -95,9 +65,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const closeLightbox = useCallback(() => {
     setIsLightboxOpen(false);
     setIsZoomed(false);
-    if (document.fullscreenElement) {
-      document.exitFullscreen?.();
-    }
     if (hasLockedScrollRef.current) {
       unlockScroll();
       hasLockedScrollRef.current = false;
@@ -280,24 +247,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               ) : (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h6m0 0v6m0-6l-7 7M9 21H3m0 0v-6m0 6l7-7" />
-                </svg>
-              )}
-            </button>
-
-            {/* Fullscreen toggle */}
-            <button
-              onClick={toggleFullscreen}
-              className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
-              aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
-              title={isFullscreen ? "Exit full screen" : "Enter full screen"}
-            >
-              {isFullscreen ? (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 9V4h5M18 9V4h-5M6 15v5h5M18 15v5h-5" />
-                </svg>
-              ) : (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
                 </svg>
               )}
             </button>
